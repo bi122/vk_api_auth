@@ -70,6 +70,18 @@ def auth(email, password, client_id, scope):
             raise NotImplementedError("Method '%s'" % parser.method)
         return response.read(), response.geturl()
 
+    #2nd step of authentification
+    def sms_code(doc, opener):
+        parser = FormParser()
+        parser.feed(doc)
+        parser.close()
+        parser.params["code"] = raw_input("Type code from SMS: ")
+        if parser.method == "POST":
+            response = opener.open("https://m.vk.com" + parser.url, urllib.urlencode(parser.params))
+        else:
+            raise NotImplementedError("Method '%s'" % parser.method)
+        return response.read(), response.geturl()
+
     # Permission request form
     def give_access(doc, opener):
         parser = FormParser()
@@ -90,6 +102,8 @@ def auth(email, password, client_id, scope):
         urllib2.HTTPCookieProcessor(cookielib.CookieJar()),
         urllib2.HTTPRedirectHandler())
     doc, url = auth_user(email, password, client_id, scope, opener)
+    if "/login" in urlparse(url).path: 
+        doc, url = sms_code(doc, opener)
     if urlparse(url).path != "/blank.html":
         # Need to give access to requested scope
         url = give_access(doc, opener)

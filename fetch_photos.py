@@ -45,7 +45,7 @@ if len(sys.argv) == 2:
     directory = sys.argv[1]
 email = raw_input("Email: ")
 password = getpass.getpass()
-client_id = "2951857" # Vk application ID
+client_id = "5152537" # Vk application ID
 token, user_id = vk_auth.auth(email, password, client_id, "photos")
 albums = get_albums(user_id, token)
 print "\n".join("%d. %s" % (num + 1, album["title"]) for num, album in enumerate(albums))
